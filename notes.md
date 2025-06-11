@@ -202,4 +202,60 @@ import { Button } from "@repo/button/index";
     }
   }
   ```
-- Haven’t gotten tailwind working yet…
+
+**Adding tailwind to react app and using shared config**
+
+- Create `postcss.config.js` file within the new app:
+
+  ```tsx
+  // Use the shared Tailwind and Autoprefixer plugins directly
+  import tailwindcss from "@tailwindcss/postcss";
+  import autoprefixer from "autoprefixer";
+
+  export default {
+    plugins: [tailwindcss, autoprefixer],
+  };
+  ```
+
+- Create `tailwind.config.js` file within the new app:
+
+  ```tsx
+  import { join } from "path";
+  import tailwindConfig from "@repo/tailwind-config";
+
+  /**
+   * Shared Tailwind config for Turborepo apps.
+   * This file re-exports the config from the shared package.
+   */
+
+  export default {
+    ...tailwindConfig,
+    content: [
+      "./src/**/*.{js,ts,jsx,tsx}",
+      // Also scan shared packages for class usage
+      join(__dirname, "../../packages/ui/**/*.{js,ts,jsx,tsx}"),
+    ],
+  };
+  ```
+
+- Add `@import "@repo/tailwind-config/shared-styles.css";` to the top of the `index.css` file within the new repo.
+
+- Ensure `tailwind-config` in packages exports `shared-styles.css`
+  ```tsx
+  {
+    "name": "@repo/tailwind-config",
+    "version": "0.0.0",
+    "type": "module",
+    "private": true,
+    "exports": {
+      ".": "./shared-styles.css",
+      "./shared-styles.css": "./shared-styles.css", <--- Here
+      "./postcss": "./postcss.config.js"
+    },
+    "devDependencies": {
+      "postcss": "^8.5.3",
+      "tailwindcss": "^4.1.5"
+    }
+  }
+  ```
+- Can add `bg-red` to the app to check tailwind comes through
