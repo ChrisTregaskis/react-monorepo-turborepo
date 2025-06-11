@@ -1,0 +1,18 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["build:button"]
+    },
+    "build:button": {
+      "outputs": ["dist/**"]
+    },
+    "dev": {
+      "with": ["dev:button"]
+    },
+    "dev:button": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
